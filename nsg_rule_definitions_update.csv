@@ -1,0 +1,2 @@
+Name,Description,Access,Protocol,Direction,Priority,SourceAddressPrefix,SourcePortRange,DestinationAddressPrefix,DestinationPortRange,OldPriority
+sql-rule,Allow SQL Server traffic- PS Created,Allow,Tcp,Outbound,500,*,*,*,1433,500
