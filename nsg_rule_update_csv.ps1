@@ -109,7 +109,7 @@ if ($userInput -ieq 'yes') {
     Write-Host "About to update rule name: $name in NSG: $nsgName of rg: $resourceGroup"
     Write-Host "---------------------------------------------------------------------------------"
     foreach ($ruleDefinition in $ruleDefinition) {
-        Update-NsgRule -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup -NsgName $nsgName -ruleDefinition $ruleDefinition -subnetaddrprefix $subnetaddrprefix
+        Update-NsgRule -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup -NsgName $nsgName -ruleDefinition $ruleDefinition 
     }
   }
 } else {
