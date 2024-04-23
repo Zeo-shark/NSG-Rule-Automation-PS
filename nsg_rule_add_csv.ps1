@@ -2,12 +2,10 @@ Import-Module Az.Network
 Connect-AzAccount
 
 # Function to add the rule to an NSG
-function Add-NsgRule ($SubscriptionId, $ResourceGroup, $NsgName, $ruleDefinition, $SubnetAddressPrefix) {
-  if ($ruleDefinition.Direction -ieq 'Inbound') {
-    $rule = New-AzNetworkSecurityRuleConfig -Name $ruleDefinition.Name -Description $ruleDefinition.Description -Priority $ruleDefinition.Priority -Direction $ruleDefinition.Direction -Access $ruleDefinition.Access -SourceAddressPrefix $ruleDefinition.SourceAddressPrefix -SourcePortRange $ruleDefinition.SourcePortRange -DestinationAddressPrefix $subnetAddressPrefix -DestinationPortRange $ruleDefinition.DestinationPortRange -Protocol $ruleDefinition.Protocol
-  } elseif ($ruleDefinition.Direction -ieq 'Outbound') {
-      $rule = New-AzNetworkSecurityRuleConfig -Name $ruleDefinition.Name -Description $ruleDefinition.Description -Priority $ruleDefinition.Priority -Direction $ruleDefinition.Direction -Access $ruleDefinition.Access -SourceAddressPrefix $subnetAddressPrefix -SourcePortRange $ruleDefinition.SourcePortRange -DestinationAddressPrefix $ruleDefinition.DestinationAddressPrefix -DestinationPortRange $ruleDefinition.DestinationPortRange -Protocol $ruleDefinition.Protocol
-  }
+function Add-NsgRule ($SubscriptionId, $ResourceGroup, $NsgName, $ruleDefinition) {
+  
+  $rule = New-AzNetworkSecurityRuleConfig -Name $ruleDefinition.Name -Description $ruleDefinition.Description -Priority $ruleDefinition.Priority -Direction $ruleDefinition.Direction -Access $ruleDefinition.Access -SourceAddressPrefix $ruleDefinition.SourceAddressPrefix -SourcePortRange $ruleDefinition.SourcePortRange -DestinationAddressPrefix $ruleDefinition.DestinationAddressPrefix -DestinationPortRange $ruleDefinition.DestinationPortRange -Protocol $ruleDefinition.Protocol
+  
   Try {
     # Switch the context to the appropriate subscription
     Set-AzContext -SubscriptionId $SubscriptionId -ErrorAction Stop
@@ -46,17 +44,10 @@ Write-Host "The following rule definition will be added in NSGs"
 Write-Host "Name: $($ruleDefinition.Name)"
 Write-Host "Priority: $($ruleDefinition.Priority)"
 Write-Host "Direction: $($ruleDefinition.Direction)"
-if ($ruleDefinition.Direction -ieq 'Inbound') {
-  Write-Host "SourceAddressPrefix: $($ruleDefinition.SourceAddressPrefix)"
-  Write-Host "SourcePortRange: $($ruleDefinition.SourcePortRange)"
-  Write-Host "DestinationAddressPrefix: SubnetAddressPrefix"
-  Write-Host "DestinationPortRange: $($ruleDefinition.DestinationPortRange)"
-} elseif ($ruleDefinition.Direction -ieq 'Outbound') {
-  Write-Host "SourceAddressPrefix: SubnetAddressPrefix"
-  Write-Host "SourcePortRange: $($ruleDefinition.SourcePortRange)"
-  Write-Host "DestinationAddressPrefix: $($targetNsgs.DestinationAddressPrefix)"
-  Write-Host "DestinationPortRange: $($ruleDefinition.DestinationPortRange)"
-}
+Write-Host "SourceAddressPrefix: $($ruleDefinition.SourceAddressPrefix)"
+Write-Host "SourcePortRange: $($ruleDefinition.SourcePortRange)"
+Write-Host "DestinationAddressPrefix: $($ruleDefinition.DestinationAddressPrefix)"
+Write-Host "DestinationPortRange: $($ruleDefinition.DestinationPortRange)"
 Write-Host "Protocol: $($ruleDefinition.Protocol)"
 Write-Host "Access: $($ruleDefinition.Access)"
 Write-Host "---------------------------------------------------------------------------------"
@@ -69,12 +60,11 @@ if ($userInput -ieq 'yes') {
       $subscriptionId = $targetNsg.SubscriptionId
       $resourceGroup = $targetNsg.ResourceGroup
       $nsgName = $targetNsg.Name
-      $subnetaddrprefix = $targetNsg.SubnetAddressPrefix
       $name= $ruleDefinition.Name
 
       # Check if variables are null or empty
-      if ([string]::IsNullOrEmpty($subscriptionId) -or [string]::IsNullOrEmpty($resourceGroup) -or [string]::IsNullOrEmpty($nsgName) -or [string]::IsNullOrEmpty($subnetaddrprefix)) {
-        $errorMessage = "One or more required variables are null or empty: subscriptionId = '$subscriptionId', resourceGroup = '$resourceGroup', nsgName = '$nsgName', subnetaddrprefix = '$subnetaddrprefix', please recheck and try again"
+      if ([string]::IsNullOrEmpty($subscriptionId) -or [string]::IsNullOrEmpty($resourceGroup) -or [string]::IsNullOrEmpty($nsgName)) {
+        $errorMessage = "One or more required variables are null or empty: subscriptionId = '$subscriptionId', resourceGroup = '$resourceGroup', nsgName = '$nsgName', please recheck and try again"
         Write-Error $errorMessage
         $logFileName = "$($run_time)_$($ruleDefinition.Name)_add_fail.log"
         Add-Content -Path $logFileName -Value $errorMessage
@@ -83,7 +73,7 @@ if ($userInput -ieq 'yes') {
 
       Write-Host "About to add rule name: $name in NSG: $nsgName of rg: $resourceGroup"
       Write-Host "---------------------------------------------------------------------------------"
-      Add-NsgRule -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup -NsgName $nsgName -ruleDefinition $ruleDefinition -SubnetAddressPrefix $subnetaddrprefix
+      Add-NsgRule -SubscriptionId $subscriptionId -ResourceGroup $resourceGroup -NsgName $nsgName -ruleDefinition $ruleDefinition 
   }
 } else {
     Write-Host "Add operation cancelled by user."

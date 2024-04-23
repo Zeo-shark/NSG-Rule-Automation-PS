@@ -55,21 +55,13 @@ if ([string]::IsNullOrEmpty($ruleDefinition.Name) -or [string]::IsNullOrEmpty($r
 }
 
 Write-Host "---------------------------------------------------------------------------------"
-Write-Host "The following rule definition will be added in NSGs"
 Write-Host "Name: $($ruleDefinition.Name)"
 Write-Host "Priority: $($ruleDefinition.Priority)"
 Write-Host "Direction: $($ruleDefinition.Direction)"
-if ($ruleDefinition.Direction -ieq 'Inbound') {
-  Write-Host "SourceAddressPrefix: $($ruleDefinition.SourceAddressPrefix)"
-  Write-Host "SourcePortRange: $($ruleDefinition.SourcePortRange)"
-  Write-Host "DestinationAddressPrefix: SubnetAddressPrefix"
-  Write-Host "DestinationPortRange: $($ruleDefinition.DestinationPortRange)"
-} elseif ($ruleDefinition.Direction -ieq 'Outbound') {
-  Write-Host "SourceAddressPrefix: SubnetAddressPrefix"
-  Write-Host "SourcePortRange: $($ruleDefinition.SourcePortRange)"
-  Write-Host "DestinationAddressPrefix: $($targetNsgs.DestinationAddressPrefix)"
-  Write-Host "DestinationPortRange: $($ruleDefinition.DestinationPortRange)"
-}
+Write-Host "SourceAddressPrefix: $($ruleDefinition.SourceAddressPrefix)"
+Write-Host "SourcePortRange: $($ruleDefinition.SourcePortRange)"
+Write-Host "DestinationAddressPrefix: $($ruleDefinition.DestinationAddressPrefix)"
+Write-Host "DestinationPortRange: $($ruleDefinition.DestinationPortRange)"
 Write-Host "Protocol: $($ruleDefinition.Protocol)"
 Write-Host "Access: $($ruleDefinition.Access)"
 Write-Host "---------------------------------------------------------------------------------"
